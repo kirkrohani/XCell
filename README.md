@@ -7,7 +7,7 @@ Welcome to the XCell app. This app is the beginning of the next great Google She
 
 
 ####Live Demo
-<iframe width="740" height="555" src="https://www.youtube.com/embed/QldDCzS_KLU" frameborder="0" allowfullscreen></iframe>
+[Youtube Video to Live Demo]("https://www.youtube.com/embed/)
 
 
 ##Tech Spec
