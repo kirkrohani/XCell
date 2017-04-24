@@ -6,4 +6,4 @@ class ArrayUtils {
   }
 }
 
-module.exports = ArrayUtils;
+module.exports = new ArrayUtils();
