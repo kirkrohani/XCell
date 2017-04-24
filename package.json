@@ -1,0 +1,11 @@
+{
+  "name": "xcell",
+  "version": "1.0.0",
+  "description": "world's coolest cloud-based spreadsheet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kirk <kirk.rohani@gmail.com>",
+  "license": "MIT"
+}
