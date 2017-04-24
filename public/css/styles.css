@@ -1,0 +1,18 @@
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+  border: solid 1px;
+  width:  100px;
+  padding: 5px;
+  text-align: center;
+}
+th {
+  border: solid;
+}
+input {
+  margin: 5px 0;
+  width: 340px;
+}
