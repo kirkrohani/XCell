@@ -7,12 +7,36 @@ td {
   border: solid 1px;
   width:  100px;
   padding: 5px;
+  height: 25px;
   text-align: center;
+  background-color: lightslategray;
 }
+
 th {
   border: solid;
+  background-color: gray;
 }
 input {
   margin: 5px 0;
   width: 340px;
+}
+
+.currentCell {
+  background-color: white;
+}
+
+#formula::-webkit-input-placeholder {
+color: lightgrey;
+}
+ 
+#formula:-moz-placeholder { /* Firefox 18- */
+color: lightgrey;  
+}
+ 
+#formula::-moz-placeholder {  /* Firefox 19+ */
+color: lightgrey;  
+}
+ 
+#formula:-ms-input-placeholder {  
+color: lightgrey;  
 }
