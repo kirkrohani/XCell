@@ -31,7 +31,6 @@ class TableView {
   renderFormulaBar() {
     const cellLocationForDisplay = `row ${this.currentCellLocation.row} : col ${this.currentCellLocation.col} `;
     this.formulaBar.placeholder = cellLocationForDisplay;
-
     this.formulaBar.value = this.model.getValue(this.currentCellLocation) || "";
   }
 
@@ -41,10 +40,14 @@ class TableView {
   }
 
   renderTableHeader() {
+    const fragment = document.createDocumentFragment();
+
     removeChildren(this.tableHeader);
     getLetterRange('A', this.model.cols)
       .map( letter => createTH(letter) )
-      .forEach( TH => this.tableHeader.appendChild(TH) );
+      .forEach( TH => fragment.appendChild(TH) );
+
+    this.tableHeader.appendChild(fragment);
   }
 
   isCurrentCell(row, col) {
@@ -70,8 +73,6 @@ class TableView {
       fragment.appendChild(tableRow);
     }
     this.tableBody.appendChild(fragment);
-
-    
   }
 
   handleCellClick(event) {
