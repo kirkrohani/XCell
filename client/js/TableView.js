@@ -97,17 +97,18 @@ class TableView {
   }
 
   _isValidNumericalInput(userInput) {
-    return !isNaN(userInput);
+
+    //one-off wierd scenarion when user enters -5 and then simply deletes the 5 and leaves
+    //the dash. In this scenario we need to re-calculate still.
+    return (!isNaN(userInput) || userInput === '-');
   }
 
   _setNewColumnSum(userInput) {
     if (this._isValidNumericalInput(userInput)) {
+      
       let columnDataValues = this.model.getColumnValues(this.currentCellLocation.col);
-      const sum = calculateSum(columnDataValues);
-
-      if ( (sum !== undefined) && (sum > 0) ) {
-        this.model.setColumnSum(this.currentCellLocation.col, sum);
-      }
+      const sum = calculateSum(columnDataValues);      
+      this.model.setColumnSum(this.currentCellLocation.col, sum);
     }
   }
 

@@ -12,8 +12,8 @@ const getLetterRange = function(firstLetter="A", numOfLetters) {
 };
 
 const calculateSum = function(array) {
-  return array.filter( value => !isNaN(value) )
-          .reduce( (sum, curr) => sum += parseInt(curr), 0 );
+  return array.filter( value => (!isNaN(value) && value !== "") )
+          .reduce( (sum, curr) => sum += parseFloat(curr), 0 );
 };
 
 module.exports = {
