@@ -109,7 +109,6 @@ class TableView {
         this.model.setColumnSum(this.currentCellLocation.col, sum);
       }
     }
-
   }
 
   handleFormulaBarUserInput() {
