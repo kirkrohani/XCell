@@ -32,6 +32,10 @@ class TableView {
     return this.currentCellLocation.row === row && this.currentCellLocation.col === col;
   }
 
+  _displayFormat(item) {
+    return ( (item === undefined || item === null) ) ? "" : item.toString();
+  }
+
   renderFormulaBar() {
     const cellLocationToDisplayAsPlaceHolder = `row ${this.currentCellLocation.row} : col ${this.currentCellLocation.col} `;
     this.formulaBar.placeholder = cellLocationToDisplayAsPlaceHolder;
@@ -60,7 +64,7 @@ class TableView {
     
     removeChildren(this.tableFooter);
     for (let col=0; col < this.model.cols; col++) {
-      const tableCell = createTD(this.model.getColumnSum(col) || "");
+      const tableCell = createTD(this._displayFormat(this.model.getColumnSum(col)) || "");
       fragment.appendChild(tableCell);
     }
 
