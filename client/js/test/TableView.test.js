@@ -10,6 +10,7 @@ describe("CLASS TableView Test Suite", () => {
     document.documentElement.innerHTML = html;
   });
 
+
   describe("Test Table Header", () => {
     it("has valid header row labels", () => {
       const model = new TableModel(10, 4);
@@ -22,6 +23,18 @@ describe("CLASS TableView Test Suite", () => {
       let cellValues = Array.from(tableHeaderRow.childNodes)
         .map( node => node.textContent );
       expect(cellValues).toEqual(['A', 'B', 'C', 'D']);
+    });
+  });
+
+  describe("Test Table Footer", () => {
+    it("has a valid footer row", () => {
+      const model = new TableModel(3, 3);
+      const view = new TableView(model);
+      view.init();
+
+      let tableFooterRow = document.querySelector("tfoot tr");
+      expect(tableFooterRow.childNodes).not.toBeNull();
+      expect(tableFooterRow.childNodes.length).toEqual(model.cols);
     });
   });
 
