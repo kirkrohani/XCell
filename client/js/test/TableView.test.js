@@ -27,6 +27,7 @@ describe("CLASS TableView Test Suite", () => {
   });
 
   describe("Test Table Footer", () => {
+
     it("has a valid footer row", () => {
       const model = new TableModel(3, 3);
       const view = new TableView(model);
@@ -36,6 +37,32 @@ describe("CLASS TableView Test Suite", () => {
       expect(tableFooterRow.childNodes).not.toBeNull();
       expect(tableFooterRow.childNodes.length).toEqual(model.cols);
     });
+
+    it("displays sum after user inputs number into a column", () => {
+      const model = new TableModel(3, 3);
+      const view = new TableView(model);
+      view.init();
+
+      const tableBody = document.querySelector("TBODY");
+      let tableCell = tableBody.childNodes[1].childNodes[1];
+      
+      tableCell.click();
+      view.formulaBar.value = 12;
+      view.handleFormulaBarUserInput();
+
+      
+      let tableFooterRow = document.querySelector("TFOOT TR");
+      expect(tableFooterRow.childNodes[1].textContent).toEqual("12");
+      
+    });
+
+    it("displays sum with mixed user inputs into column", () => {
+     
+    });
+
+
+
+
   });
 
   describe("Test Table Body", () => {

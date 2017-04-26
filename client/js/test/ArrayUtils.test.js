@@ -1,4 +1,4 @@
-const {getRange, getLetterRange} = require("../ArrayUtils.js");
+const {getRange, getLetterRange, calculateSum} = require("../ArrayUtils.js");
 
 
 
@@ -30,6 +30,21 @@ describe("Array Util Test Suite", () => {
 
     it("creates a singe letter range", () => {
       expect(getLetterRange( 'Q', 1)).toEqual(['Q']);
+    });
+  });
+
+  describe("FUNCTION calculateSum() ", () => {
+
+    it("adds an array of integers and returns correct result", () => {
+      expect(calculateSum([1,2,3])).toEqual(6);
+    });
+
+    it("returns zero if array of undefined", () => {
+      expect(calculateSum([undefined, undefined, undefined])).toEqual(0);
+    });
+
+    it("returns valid sum if mixture of undefined and strings and numbers", () => {
+      expect(calculateSum(['Q', 1, undefined, -14, "hello"])).toEqual(-13);
     });
   });
 

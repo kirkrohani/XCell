@@ -1,3 +1,5 @@
+const { getRange } = require("./ArrayUtils.js");
+
 class TableModel {
   constructor(numOfRows=10, numOfCols=20) {
     this.rows = numOfRows;
@@ -25,6 +27,12 @@ class TableModel {
   setColumnSum(col, value) {
     this.columnSums[col] = value;
   }
+
+  getColumnValues(col) {
+    return getRange(0, this.rows-1)
+            .map( row => this.getValue({"col": col, "row": row}) );
+  }
+
 }
 
 module.exports = TableModel;
