@@ -10,6 +10,33 @@ describe("CLASS TableView Test Suite", () => {
     document.documentElement.innerHTML = html;
   });
 
+  describe("Test Table Buttons - addRow", () => {
+    it("adds a new rown when addRow button clicked", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
+
+      expect(view.tableBody.childNodes.length).toEqual(5);
+      const addRowButton = document.querySelector("#addRow");
+      addRowButton.click();
+      expect(view.tableBody.childNodes.length).toEqual(6);
+      expect(model.rows).toEqual(6);
+    });
+  });
+
+  describe("Test Table Buttons - addCol", () => {
+    it("adds a column when add column button clicked", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
+
+      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(5);
+      const addColButton = document.querySelector("#addCol");
+      addColButton.click();
+      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(6);
+      expect(model.cols).toEqual(6);
+    });
+  });
 
   describe("Test Table Header", () => {
     it("has valid header row labels", () => {

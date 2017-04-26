@@ -21,6 +21,9 @@ class TableView {
     this.tableBody = document.querySelector("TBODY");
     this.tableFooter = document.querySelector("TFOOT TR");
     this.formulaBar = document.querySelector("#formula");
+    this.addRowButton = document.querySelector("#addRow");
+    this.addColButton = document.querySelector("#addCol");
+
     
   }
 
@@ -46,6 +49,42 @@ class TableView {
     this.renderTableHeader();
     this.renderTableBody();
     this.renderTableFooter();
+  }
+
+  renderNewRow(location) {
+    console.log(`calling renderNewLocation with location ${location}`);
+    //create a new TR
+    const tableRow = createTR();
+    
+    //loop through number of cols
+    for (let col=0; col < this.model.cols; col++) {
+      const tableCell = createTD();
+      tableRow.appendChild(tableCell);
+    }
+
+    if (location) {
+      //do something
+    } else {
+      this.tableBody.appendChild(tableRow);
+    } 
+    this.model.rows = this.model.rows + 1;
+  }
+
+  renderNewColumn(location) {
+    console.log(`Calling renderNewColumn with location ${location}`);
+
+    if(location) {
+      const tableRows = this.tableBody.childNodes;
+
+    //loop through tbody child nodes
+
+      //grab TR
+      //create new TD
+      //append new TD to TR
+    } else {
+      this.model.cols = this.model.cols + 1;
+      this.renderTable();
+    }
   }
 
   renderTableHeader() {
@@ -127,9 +166,23 @@ class TableView {
     this.renderTableFooter();
   }
 
+  handleAddRowButtonClick() {
+    console.log("add a new ROW");
+    this.renderNewRow();
+  }
+
+  handleAddColButtonClick() {
+      console.log("add a new COL");
+      this.renderNewColumn();
+
+  }  
+
   attachEventHandlers() {
     this.tableBody.addEventListener("click", this.handleCellClick.bind(this) );
     this.formulaBar.addEventListener("keyup", this.handleFormulaBarUserInput.bind(this) );
+    this.addRowButton.addEventListener("click", this.handleAddRowButtonClick.bind(this) );
+    this.addColButton.addEventListener("click", this.handleAddColButtonClick.bind(this) );
+
   }
 }
 
