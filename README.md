@@ -17,6 +17,8 @@ Welcome to the XCell app. This app is the beginning of the next great Google She
 
 ![Image](http://i.imgur.com/9DBgLu3l.jpg)
 
+
 #New Feature - Column Sums
+
 ![Image] (http://i.imgur.com/lacY6Dv.jpg)
  
