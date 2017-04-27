@@ -1,5 +1,6 @@
 table {
     border-collapse: collapse;
+    float: left;
 }
 
 th,
@@ -7,12 +8,12 @@ td {
   border: solid 1px;
   width:  100px;
   padding: 5px;
-  height: 25px;
+  height: 35px;
   text-align: center;
   background-color: lightslategray;
 }
 th {
-  border: solid;
+  border: 3px solid;
   background-color: gray;
 }
 tfoot td {
@@ -32,12 +33,33 @@ input {
 .numberColumn {
   background-color: gray;
   width: 25px;
+  height: 35px;
+  border-left: 3px solid;
+  border-bottom: 3px solid;
+  border-right: 3px solid;
 }
+.numberColumnHeader {
+  background-color: gray;
+  width: 25px;
+  height: 35px;
+  border-left: 3px solid;
+  border-bottom: 3px solid;
+  border-top: 3px solid;
+}
+.numberColumnFooter {
+  background-color: seagreen;
+  width: 25px;
+  height: 35px;
+  border-left: 3px solid;
+  border-top: 3px solid;
+  border-right: 3px solid;
+  border-bottom: 3px solid;
+}
+
 .selectedNumberColumn {
   background-color: lightgray;
   width: 25px;
 }
-
 
 /*color for the placeholder text in the formula bar*/
 #formula::-webkit-input-placeholder {

@@ -17,24 +17,27 @@ class TableView {
   }
 
   initDOMReference() {
-    this.tableHeader = document.querySelector("THEAD TR");
-    this.tableBody = document.querySelector("TBODY");
-    this.tableFooter = document.querySelector("TFOOT TR");
+    this.tableHeader = document.querySelector("#sheet THEAD TR");
+    this.tableBody = document.querySelector("#sheet TBODY");
+    this.tableFooter = document.querySelector("#sheet TFOOT TR");
+    
+    this.tableNumberColumnBody = document.querySelector("#number_column TBODY");
+   // this.tableNumberColumnFoot = document.querySelector("#number_column TFOOT");
+   // this.tableNumberColumnHead = document.querySelector("#number_column THEAD");
+
     this.formulaBar = document.querySelector("#formula");
     this.addRowButton = document.querySelector("#addRow");
-    this.addColButton = document.querySelector("#addCol");
-
-    
+    this.addColButton = document.querySelector("#addCol");    
   }
 
   initCurrentCellLocation() {
-    this.currentCellLocation = { "col": 1, "row": 0 };
+    this.currentCellLocation = { "col": 0, "row": 0 };
   }
 
   isCurrentCell(row, col) {
     if (this.currentCellLocation.row === -1) {
       return this.currentCellLocation.col === col;
-    } else if (this.currentCellLocation.col === 0) {
+    } else if (this.currentCellLocation.col === -1) {
       return this.currentCellLocation.row === row;
     } else {
       return this.currentCellLocation.row === row && this.currentCellLocation.col === col;
@@ -50,7 +53,7 @@ class TableView {
     let previousCell, newCell;
     console.log('end row passed to _shiftRowData', endRow);
     for (let row = this.model.rows-2; row >= endRow; row-- ) {
-      for (let col = 1; col <= this.model.cols; col++) {
+      for (let col = 0; col < this.model.cols; col++) {
         previousCell = {"col": col, "row": row};
         newCell = {"col": col, "row": row+1};
         // console.log(`prevcell {col:${previousCell.col},row:${previousCell.row}} value: ${this.model.getValue(previousCell)}`);
@@ -64,7 +67,7 @@ class TableView {
   }
 
   insertNewRow(insertionPoint) {
-    console.log('inserting new row at row ', insertionPoint);
+    console.log('inserting new row at insertionPoint row', insertionPoint);
     this.model.rows = this.model.rows + 1;
     if (insertionPoint < this.model.rows-1) {
       console.log('shifting row data');
@@ -125,38 +128,59 @@ class TableView {
   }
 
   renderTable() {
-    
     this.renderTableHeader();
     this.renderTableBody();
     this.renderTableFooter();
-    this.renderTableRowNumberColumn();
+    this.renderNumberColumn();
   }
 
-  renderTableRowNumberColumn() {
-    let tableCell, tableRow, insertionNode;
 
-    //create new cell for number column of header row
-    tableCell = createTH();
-    tableCell.className = "numberColumn";
-    this.tableHeader.insertBefore(tableCell, this.tableHeader.childNodes[0]);
-    
-    //create new cells for body of number column
-    for (let row=0; row < this.model.rows; row++) {
-      tableCell = createTH( (row+1) + '');
-      if (this.currentCellLocation.row === row && this.currentCellLocation.col === 0) {
+  renderNumberColumnHeader() {
+    let tableRow, tableCell;
+
+    removeChildren(this.tableNumberColumnBody.previousElementSibling);
+    tableRow = createTR();
+    tableCell = createTD();
+    tableCell.className = "numberColumnHeader";
+    tableRow.appendChild(tableCell);
+    this.tableNumberColumnBody.previousElementSibling.appendChild(tableRow);
+  }
+
+  renderNumberColumnFooter() {
+    let tableRow, tableCell;
+
+    removeChildren(this.tableNumberColumnBody.nextElementSibling);
+
+    tableRow = createTR();
+    tableCell = createTD();
+    tableCell.className = "numberColumnFooter";
+    tableRow.appendChild(tableCell);
+    this.tableNumberColumnBody.nextElementSibling.appendChild(tableRow);
+  }
+
+  renderNumberColumnBody() {
+    removeChildren(this.tableNumberColumnBody);
+   
+    let tableCell, tableRow;
+
+    for( let row=0; row < this.model.rows; row++) {
+      tableRow = createTR();
+      tableCell = createTD( (row+1) + '');
+      if (this.isCurrentCell(row, null)) {
         tableCell.className = "selectedNumberColumn";
       } else {
         tableCell.className = "numberColumn";
       }
-      tableRow = this.tableBody.childNodes[row];
-      tableRow.insertBefore(tableCell, tableRow.childNodes[0]);
+      
+      tableRow.appendChild(tableCell);
+      this.tableNumberColumnBody.appendChild(tableRow);
     }
-
-    //create new footer cell
-    tableCell = createTH();
-    tableCell.className = "numberColumn";
-    this.tableFooter.insertBefore(tableCell, this.tableFooter.childNodes[0]);
-
+  }
+    
+  renderNumberColumn() {
+    this.renderNumberColumnBody();
+    this.renderNumberColumnHeader();
+    this.renderNumberColumnFooter();
   }
 
   renderTableHeader() {
@@ -166,7 +190,7 @@ class TableView {
     getLetterRange('A', this.model.cols)
       .map( (letter, index) => {
         const tableHeader = createTH(letter);
-        if (this.currentCellLocation.row === -1 && ( (index+1) === this.currentCellLocation.col)) {
+        if (this.currentCellLocation.row === -1 && ( index === this.currentCellLocation.col)) {
           tableHeader.className = "selectedHeader";
         } 
         return tableHeader;
@@ -180,15 +204,13 @@ class TableView {
     const fragment = document.createDocumentFragment();
     
     removeChildren(this.tableFooter);
-    for (let col=1; col <= this.model.cols; col++) {
+    for (let col=0; col < this.model.cols; col++) {
       const tableCell = createTD(this._displayFormat(this.model.getColumnSum(col)) || "");
       fragment.appendChild(tableCell);
     }
 
     this.tableFooter.appendChild(fragment);
   }
-
-
 
   renderTableBody() {
     removeChildren(this.tableBody);
@@ -197,7 +219,7 @@ class TableView {
     for (let row=0; row < this.model.rows; row++) {
       const tableRow = createTR();
       
-      for (let col=1; col <= this.model.cols; col++) {
+      for (let col=0; col < this.model.cols; col++) {
         const location = {"col": col, "row": row};
         const tableCell = createTD(this.model.getValue(location));
 
@@ -230,23 +252,31 @@ class TableView {
 
     this.renderTable();
   }
+  handleColumnClick(event) {
+    this.handleCellClick(event);
+  }
+  handleRowClick(event) {
+    let row = event.target.parentElement.rowIndex -1;
+    let col = -1;
+    console.log(`user clicked cell row:${row} col:${col}`);
 
+    this.currentCellLocation = {"col": col, "row": row};    
+    this.renderTable();
+    this.renderFormulaBar();
+  }
   handleCellClick(event) {
     let col = event.target.cellIndex;
     let row = event.target.parentElement.rowIndex -1;
 
     console.log(`user clicked cell row:${row} col:${col}`);
-    if (col === 0 && row === -1) {
-      col = 1;
-      row = 0;
-    }
+
     this.currentCellLocation = {"col": col, "row": row};    
     this.renderTable();
     this.renderFormulaBar();
   }
 
   handleAddRowButtonClick() {
-    const rowInsertionPoint = (this.currentCellLocation.col === 0) ? this.currentCellLocation.row : this.model.rows;
+    const rowInsertionPoint = (this.currentCellLocation.col === -1) ? this.currentCellLocation.row : this.model.rows;
     this.insertNewRow(rowInsertionPoint);
   }
 
@@ -257,8 +287,9 @@ class TableView {
   }  
 
   attachEventHandlers() {
-    this.tableHeader.addEventListener("click", this.handleCellClick.bind(this) );
+    this.tableHeader.addEventListener("click", this.handleColumnClick.bind(this) );
     this.tableBody.addEventListener("click", this.handleCellClick.bind(this) );
+    this.tableNumberColumnBody.addEventListener("click", this.handleRowClick.bind(this))
     this.formulaBar.addEventListener("keyup", this.handleFormulaBarUserInput.bind(this) );
     this.addRowButton.addEventListener("click", this.handleAddRowButtonClick.bind(this) );
     this.addColButton.addEventListener("click", this.handleAddColButtonClick.bind(this) );
