@@ -1,6 +1,7 @@
 table {
     border-collapse: collapse;
 }
+
 th,
 td {
   border: solid 1px;
@@ -22,13 +23,23 @@ input {
   width: 340px;
 }
 
-.currentCell {
+.selectedCell {
   background-color: white;
 }
-.currentHeader {
+.selectedHeader {
   background-color: lightgray;
 }
+.numberColumn {
+  background-color: gray;
+  width: 25px;
+}
+.selectedNumberColumn {
+  background-color: lightgray;
+  width: 25px;
+}
 
+
+/*color for the placeholder text in the formula bar*/
 #formula::-webkit-input-placeholder {
 color: lightgrey;
 }

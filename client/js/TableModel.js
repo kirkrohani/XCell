@@ -1,7 +1,7 @@
 const { getRange } = require("./ArrayUtils.js");
 
 class TableModel {
-  constructor(numOfRows=5, numOfCols=5) {
+  constructor(numOfRows=3, numOfCols=2) {
     this.rows = numOfRows;
     this.cols = numOfCols;
     this.data = {};
