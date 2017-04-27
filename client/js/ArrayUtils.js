@@ -11,7 +11,7 @@ const getLetterRange = function(firstLetter="A", numOfLetters) {
     .map( charCode => String.fromCharCode(charCode) );
 };
 
-const calculateSum = function(array) {
+const calculateArraySum = function(array) {
   return array.filter( value => (!isNaN(value) && value !== "") )
           .reduce( (sum, curr) => sum += parseFloat(curr), 0 );
 };
@@ -19,6 +19,6 @@ const calculateSum = function(array) {
 module.exports = {
   getRange: getRange,
   getLetterRange: getLetterRange,
-  calculateSum: calculateSum
+  calculateArraySum: calculateArraySum
 };
 

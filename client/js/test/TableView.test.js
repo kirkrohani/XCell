@@ -23,17 +23,49 @@ describe("CLASS TableView Test Suite", () => {
       expect(model.rows).toEqual(6);
     });
 
-    it("adds a column when add column button clicked", () => {
+    // it("adds a column when add column button clicked", () => {
+    //   const model = new TableModel(5, 5);
+    //   const view = new TableView(model);
+    //   view.init();
+
+    //   expect(view.tableBody.childNodes[0].childNodes.length).toEqual(5);
+    //   const addColButton = document.querySelector("#addCol");
+    //   addColButton.click();
+    //   expect(view.tableBody.childNodes[0].childNodes.length).toEqual(6);
+    //   expect(model.cols).toEqual(6);
+    // });
+
+    it("adds a new row at a specific location", () => {
       const model = new TableModel(5, 5);
       const view = new TableView(model);
       view.init();
 
-      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(5);
-      const addColButton = document.querySelector("#addCol");
-      addColButton.click();
-      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(6);
-      expect(model.cols).toEqual(6);
+      const tableBody = document.querySelector("TBODY");
+      expect(tableBody.childNodes.length).toEqual(5);
+
+      view.insertNewRow(1);
+      expect(tableBody.childNodes.length).toEqual(6);
     });
+
+    it("adds a new column at a specific location", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
+
+      const tableBody = document.querySelector("TBODY");
+      expect(tableBody.childNodes[1].childNodes.length).toEqual(5);
+
+      model.setValue({"col":1, "row":0}, 6);
+      model.setValue({"col":1, "row":1}, 7);
+      model.setValue({"col":1, "row":2}, 8);
+      model.setValue({"col":1, "row":3}, 9);
+      model.setValue({"col":1, "row":4}, 10);
+      console.log(model.getValue({"col":1, "row":0}));
+      view.insertNewColumn();
+    });
+
+
+
   });
 
 
@@ -100,13 +132,6 @@ describe("CLASS TableView Test Suite", () => {
       expect(tableFooterRow.childNodes[1].textContent).toEqual("12");
       
     });
-
-    it("displays sum with mixed user inputs into column", () => {
-     
-    });
-
-
-
 
   });
 
