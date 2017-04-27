@@ -25,6 +25,9 @@ input {
 .currentCell {
   background-color: white;
 }
+.currentHeader {
+  background-color: lightgray;
+}
 
 #formula::-webkit-input-placeholder {
 color: lightgrey;

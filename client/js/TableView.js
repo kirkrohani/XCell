@@ -32,7 +32,11 @@ class TableView {
   }
 
   isCurrentCell(row, col) {
-    return this.currentCellLocation.row === row && this.currentCellLocation.col === col;
+    if (this.currentCellLocation.row === -1) {
+      return this.currentCellLocation.col === col;
+    } else {
+      return this.currentCellLocation.row === row && this.currentCellLocation.col === col;
+    }
   }
 
   _displayFormat(item) {
@@ -40,9 +44,13 @@ class TableView {
   }
 
   renderFormulaBar() {
-    const cellLocationToDisplayAsPlaceHolder = `row ${this.currentCellLocation.row} : col ${this.currentCellLocation.col} `;
-    this.formulaBar.placeholder = cellLocationToDisplayAsPlaceHolder;
-    this.formulaBar.value = this.model.getValue(this.currentCellLocation) || "";
+    if (this.currentCellLocation.row !== -1) {
+      const cellLocationToDisplayAsPlaceHolder = `row ${this.currentCellLocation.row} : col ${this.currentCellLocation.col} `;
+      this.formulaBar.placeholder = cellLocationToDisplayAsPlaceHolder;
+      this.formulaBar.value = this.model.getValue(this.currentCellLocation) || "";
+    } else {
+      this.formulaBar.value = "";
+    }
   }
 
   renderTable() {
@@ -53,21 +61,23 @@ class TableView {
 
   renderNewRow(location) {
     console.log(`calling renderNewLocation with location ${location}`);
-    //create a new TR
-    const tableRow = createTR();
     
-    //loop through number of cols
-    for (let col=0; col < this.model.cols; col++) {
-      const tableCell = createTD();
-      tableRow.appendChild(tableCell);
-    }
+    this.model.rows = this.model.rows + 1;
+ 
 
     if (location) {
-      //do something
-    } else {
+      //create a new TR
+      const tableRow = createTR();
+        //loop through number of cols
+      for (let col=0; col < this.model.cols; col++) {
+        const tableCell = createTD();
+        tableRow.appendChild(tableCell);
+      }
       this.tableBody.appendChild(tableRow);
+    } else {
+      this.renderTableBody();
     } 
-    this.model.rows = this.model.rows + 1;
+    
   }
 
   renderNewColumn(location) {
@@ -92,7 +102,13 @@ class TableView {
 
     removeChildren(this.tableHeader);
     getLetterRange('A', this.model.cols)
-      .map( letter => createTH(letter) )
+      .map( (letter, index) => {
+        const tableHeader = createTH(letter);
+        if (this.currentCellLocation.row === -1 && index === this.currentCellLocation.col){
+          tableHeader.className = "currentHeader";
+        } 
+        return tableHeader;
+      })
       .forEach( TH => fragment.appendChild(TH) );
 
     this.tableHeader.appendChild(fragment);
@@ -130,15 +146,6 @@ class TableView {
     this.tableBody.appendChild(fragment);
   }
 
-  handleCellClick(event) {
-    const col = event.target.cellIndex;
-    const row = event.target.parentElement.rowIndex -1;
-
-    this.currentCellLocation = {"col": col, "row": row};
-    this.renderTableBody();
-    this.renderFormulaBar();
-  }
-
   _isValidNumericalInput(userInput) {
 
     //one-off wierd scenarion when user enters -5 and then simply deletes the 5 and leaves
@@ -166,18 +173,31 @@ class TableView {
     this.renderTableFooter();
   }
 
+  handleCellClick(event) {
+    const col = event.target.cellIndex;
+    const row = event.target.parentElement.rowIndex -1;
+
+    console.log(`user clicked cell row:${row} col:${col}`);
+
+    this.currentCellLocation = {"col": col, "row": row};    
+    this.renderTableHeader();
+    this.renderTableBody();
+    this.renderFormulaBar();
+  }
+
   handleAddRowButtonClick() {
     console.log("add a new ROW");
     this.renderNewRow();
   }
 
   handleAddColButtonClick() {
-      console.log("add a new COL");
-      this.renderNewColumn();
+    console.log("add a new COL");
+    this.renderNewColumn();
 
   }  
 
   attachEventHandlers() {
+    this.tableHeader.addEventListener("click", this.handleCellClick.bind(this) );
     this.tableBody.addEventListener("click", this.handleCellClick.bind(this) );
     this.formulaBar.addEventListener("keyup", this.handleFormulaBarUserInput.bind(this) );
     this.addRowButton.addEventListener("click", this.handleAddRowButtonClick.bind(this) );

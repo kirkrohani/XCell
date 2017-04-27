@@ -22,9 +22,7 @@ describe("CLASS TableView Test Suite", () => {
       expect(view.tableBody.childNodes.length).toEqual(6);
       expect(model.rows).toEqual(6);
     });
-  });
 
-  describe("Test Table Buttons - addCol", () => {
     it("adds a column when add column button clicked", () => {
       const model = new TableModel(5, 5);
       const view = new TableView(model);
@@ -37,6 +35,7 @@ describe("CLASS TableView Test Suite", () => {
       expect(model.cols).toEqual(6);
     });
   });
+
 
   describe("Test Table Header", () => {
     it("has valid header row labels", () => {
@@ -51,6 +50,25 @@ describe("CLASS TableView Test Suite", () => {
         .map( node => node.textContent );
       expect(cellValues).toEqual(['A', 'B', 'C', 'D']);
     });
+
+    it("clicking table header row highlights current column", () => {
+
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
+      
+      let tableHeaderCell = document.querySelector("THEAD TR").childNodes[1];
+      expect(tableHeaderCell.className).toBe("");
+
+      tableHeaderCell.click();
+      tableHeaderCell = document.querySelector("THEAD TR").childNodes[1];
+      expect(tableHeaderCell.className).toBe("currentHeader");
+
+      const tableBodyCell = document.querySelector("TBODY").childNodes[1].childNodes[1];
+      expect(tableBodyCell.className).toBe("currentCell");
+    });
+
+
   });
 
   describe("Test Table Footer", () => {
