@@ -5,7 +5,7 @@ class TableModel {
     this.rows = numOfRows;
     this.cols = numOfCols;
     this.data = {};
-    this.columnSums = {};
+   // this.columnSums = {};
   }
 
   _getCellId(location) {
@@ -20,13 +20,13 @@ class TableModel {
     this.data[this._getCellId(location)] = value;
   }
 
-  getColumnSum(col) {
-    return this.columnSums[col];
-  }
+  // getColumnSum(col) {
+  //   return this.columnSums[col];
+  // }
 
-  setColumnSum(col, value) {
-    this.columnSums[col] = value;
-  }
+  // setColumnSum(col, value) {
+  //   this.columnSums[col] = value;
+  // }
 
   getColumnValues(col) {
     return getRange(0, this.rows-1)

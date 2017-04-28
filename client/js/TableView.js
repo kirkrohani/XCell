@@ -1,6 +1,8 @@
 const { removeChildren, createTH, createTR, createTD } = require("./DOMUtils.js");
 const { getLetterRange, calculateArraySum } = require("./ArrayUtils.js");
 
+
+
 class TableView {
 
   constructor(model) {
@@ -45,7 +47,18 @@ class TableView {
   }
 
   _displayFormat(item) {
-    return ( (item === undefined || item === null) ) ? "" : item.toString();
+    console.log(`DISPLAY FORMAT ${item} `);
+    if (item === undefined || item === null) {
+      console.log('HERe1');
+      return  "";
+    } else if (isNaN(item)) {
+      console.log('HERe2');
+      return "0";
+    } else {
+      console.log('HERe3');
+      return item.toString();
+    }
+      
   }
 
 
@@ -62,8 +75,9 @@ class TableView {
         if (row === endRow) {
           this.model.setValue(previousCell, undefined);
         }
-      }
-    }
+      } //end inner for loop
+    } //end outer for loop
+
   }
 
   insertNewRow(insertionPoint) {
@@ -76,9 +90,6 @@ class TableView {
     this.renderTable();
   }
 
-  _calculateColumnSum(col) {
-    return calculateArraySum(this.model.getColumnValues(col));  
-  }
 
   _shiftColumnData(endColumn) {
     console.log('shifting column data endColumn is ', endColumn);
@@ -97,13 +108,13 @@ class TableView {
     }
   }
 
-  _shiftColumnSums(startingColumn) {
-    console.log(`shifting column sums startingColumn passed in ${startingColumn}`);
-    this.model.setColumnSum(startingColumn, "");
-    for (let col=startingColumn+1; col <= this.model.cols; col++) {
-      this.model.setColumnSum(col, this._calculateColumnSum(col) );
-    }
-  }
+  // _shiftColumnSums(startingColumn) {
+  //   console.log(`shifting column sums startingColumn passed in ${startingColumn}`);
+  //   this.model.setColumnSum(startingColumn, "");
+  //   for (let col=startingColumn+1; col <= this.model.cols; col++) {
+  //     this.model.setColumnSum(col, this._calculateColumnSum(col) );
+  //   }
+  // }
 
   insertNewColumn(insertionPoint) {
     console.log('insertNewColumn at: ', insertionPoint);
@@ -112,7 +123,7 @@ class TableView {
 
     if (insertionPoint < this.model.cols-1) {
       this._shiftColumnData(insertionPoint+1);
-      this._shiftColumnSums(insertionPoint+1);
+     // this._shiftColumnSums(insertionPoint+1);
     }
     this.renderTable();
   }
@@ -202,11 +213,14 @@ class TableView {
   }
 
   renderTableFooter() {
+    
     const fragment = document.createDocumentFragment();
     
     removeChildren(this.tableFooter);
     for (let col=0; col < this.model.cols; col++) {
-      const tableCell = createTD(this._displayFormat(this.model.getColumnSum(col)) || "");
+      let value = this.calculateFooterSum(this.model.getColumnValues(col));
+      console.log(`RENDER TABLE FOOTER for col ${col} received ${value} from calculateFooterSum`);
+      const tableCell = createTD( this._displayFormat(value));
       fragment.appendChild(tableCell);
     }
 
@@ -222,7 +236,13 @@ class TableView {
       
       for (let col=0; col < this.model.cols; col++) {
         const location = {"col": col, "row": row};
-        const tableCell = createTD(this.model.getValue(location));
+        let data = this.model.getValue(location);
+        if (this._isFormula(data)) {
+          console.log(`CALLING EXECUTEFORMULA TO DISPLAY ROW:${row} col:${col} for ${data}`);
+          data = this.executeFormula(data);
+        }
+
+        const tableCell = createTD(this._displayFormat(data));
 
         if(this.isCurrentCell(row, col))
           tableCell.className = "selectedCell";
@@ -236,20 +256,98 @@ class TableView {
   _isValidNumericalInput(userInput) {
     //one-off wierd scenarion when user enters -5 and then simply deletes the 5 and leaves
     //the dash. In this scenario we need to re-calculate still.
-    return (!isNaN(userInput) || userInput === '-');
+    return (!isNaN(userInput) || userInput === '-' || this._isFormula(userInput));
   }
 
+  _isFormula(userInput) {
+    const regex = /^=SUM\([A-Za-z]\d{1,2}:[A-Za-z]\d{1,2}\)$/g;
+    return regex.test(userInput);
+  }
+
+  _convertCellCoordinatesToLocation(coordinate) {
+    console.log('_convertCellCoordinatesToLocation', coordinate);
+    const col = coordinate[0].charCodeAt(0)-65;
+    return {"col": col, "row": parseInt(coordinate.substring(1)-1)};
+  }
+
+  _parseUserInput(input) {
+    console.log(`_parseUserInput input ${input}`);
+    const firstParenIndex = input.indexOf("(");
+    const secondParenIndex = input.indexOf(")");
+    input = input.substring(firstParenIndex+1, secondParenIndex);
+    const tableCells = input.split(":");
+
+    return [this._convertCellCoordinatesToLocation(tableCells[0]), this._convertCellCoordinatesToLocation(tableCells[1])];
+  }
+
+  // _calculateColumnSum(col) {
+  //   return this.calculateSum(this.model.getColumnValues(col));  
+  // }
+
+  calculateFooterSum(array) {
+    let filtered =  array.filter( item => ( this._isFormula(item) || (!isNaN(item) && item !== "")) );
+
+    console.log(`calculateFooterSum FILTERED array ${filtered.length}`);
+    if (!filtered.length) {
+      console.log(`returning empty inside calculateFooterSum with array ${array}`);
+      return "";
+    } else {
+      return filtered.reduce( (sum, curr) =>  {
+        if (this._isFormula(curr)) {
+          curr = this.executeFormula(curr);
+          console.log(`Inside FILTER REDUCE with array ${array} got forumula result of ${curr}`);
+        }
+        sum += parseFloat(curr); 
+        return sum;
+      }, 0);
+    }
+  }
+
+
+  calculateFormulaSum(array) {
+    let filtered =  array.filter( item => ( this._isFormula(item) || (!isNaN(item) && item !== "")) );
+
+    console.log(`calculateFormulaSum FILTERED array ${filtered.length}`);
+    if (!filtered.length) {
+      console.log(`returning empty inside calculateFormulaSum with array ${array}`);
+      return 0;
+    } else {
+      return filtered.reduce( (sum, curr) =>  {
+        if (this._isFormula(curr)) {
+          curr = this.executeFormula(curr);
+          console.log(`Inside FILTER REDUCE with array ${array} got forumula result of ${curr}`);
+        }
+        sum += parseFloat(curr); 
+        return sum;
+      }, 0);
+    }
+  }
+
+   
+  executeFormula(input) {
+    const formulaInputs = this._parseUserInput(input);
+    console.log('executeFormula', formulaInputs[0], formulaInputs[1]);
+    const col = formulaInputs[0].col;
+    const rowStartingIndex = formulaInputs[0].row;
+    const rowEndingIndex = formulaInputs[1].row + 1;
+    let columnData = this.model.getColumnValues(col);
+    
+    let smallerArray = columnData.slice(rowStartingIndex, rowEndingIndex);
+    console.log('Column Data in col:'+col, columnData);
+    console.log('smallerArray', smallerArray);
+    return this.calculateFormulaSum(smallerArray);
+  }
 
   handleFormulaBarUserInput() {
     this.formulaBar.placeholder = "";
     const userInput = this.formulaBar.value;
 
     this.model.setValue(this.currentCellLocation, userInput);
-    //this._setColumnNewSum(userInput);
-    if (this._isValidNumericalInput(userInput)) {
-      const currentColumn = this.currentCellLocation.col;
-      this.model.setColumnSum(currentColumn, this._calculateColumnSum(currentColumn) );
-    }
+    
+    // if (this._isValidNumericalInput(userInput)) {
+    //   const currentColumn = this.currentCellLocation.col;
+    //   this.model.setColumnSum(currentColumn, this._calculateColumnSum(currentColumn) );
+    // }
 
     this.renderTable();
   }
