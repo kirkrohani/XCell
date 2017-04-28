@@ -118,12 +118,13 @@ class TableView {
   }
 
   renderFormulaBar() {
-    if (this.currentCellLocation.row !== -1) {
-      const cellLocationToDisplayAsPlaceHolder = `row ${this.currentCellLocation.row+1} : col ${this.currentCellLocation.col} `;
+    if (this.currentCellLocation.row !== -1 && this.currentCellLocation.col !== -1) {
+      const cellLocationToDisplayAsPlaceHolder = `row ${this.currentCellLocation.row} : col ${this.currentCellLocation.col} `;
       this.formulaBar.placeholder = cellLocationToDisplayAsPlaceHolder;
       this.formulaBar.value = this.model.getValue(this.currentCellLocation) || "";
     } else {
       this.formulaBar.value = "";
+      this.formulaBar.placeholder = "";
     }
   }
 

@@ -40,7 +40,7 @@ describe("Array Util Test Suite", () => {
     });
 
     it("returns zero if array of undefined", () => {
-      expect(calculateArraySum([undefined, undefined, undefined])).toEqual(0);
+      expect(calculateArraySum([undefined, undefined, undefined])).toEqual("");
     });
 
     it("returns valid sum if mixture of undefined and strings and numbers", () => {

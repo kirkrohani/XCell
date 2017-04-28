@@ -23,17 +23,17 @@ describe("CLASS TableView Test Suite", () => {
       expect(model.rows).toEqual(6);
     });
 
-    // it("adds a column when add column button clicked", () => {
-    //   const model = new TableModel(5, 5);
-    //   const view = new TableView(model);
-    //   view.init();
+    it("adds a column when add column button clicked", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
 
-    //   expect(view.tableBody.childNodes[0].childNodes.length).toEqual(5);
-    //   const addColButton = document.querySelector("#addCol");
-    //   addColButton.click();
-    //   expect(view.tableBody.childNodes[0].childNodes.length).toEqual(6);
-    //   expect(model.cols).toEqual(6);
-    // });
+      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(5);
+      const addColButton = document.querySelector("#addCol");
+      addColButton.click();
+      expect(view.tableBody.childNodes[0].childNodes.length).toEqual(6);
+      expect(model.cols).toEqual(6);
+    });
 
     it("adds a new row at a specific location", () => {
       const model = new TableModel(5, 5);
@@ -52,7 +52,7 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      const tableBody = document.querySelector("TBODY");
+      const tableBody = document.querySelector("#sheet TBODY");
       expect(tableBody.childNodes[1].childNodes.length).toEqual(5);
 
       model.setValue({"col":1, "row":0}, 6);
@@ -60,27 +60,32 @@ describe("CLASS TableView Test Suite", () => {
       model.setValue({"col":1, "row":2}, 8);
       model.setValue({"col":1, "row":3}, 9);
       model.setValue({"col":1, "row":4}, 10);
-      console.log(model.getValue({"col":1, "row":0}));
-      view.insertNewColumn();
+      
+
+      const tableCell = document.querySelector("#sheet THEAD TR").childNodes[0];
+      tableCell.click();
+      const insertColButton = document.querySelector("#addCol");
+      insertColButton.click();
+      
+      expect(tableBody.childNodes[1].childNodes.length).toEqual(6);
+      expect(tableBody.childNodes[0].childNodes[2].textContent).toEqual("6");
+
     });
-
-
-
   });
 
 
   describe("Test Table Header", () => {
     it("has valid header row labels", () => {
-      const model = new TableModel(10, 4);
+      const model = new TableModel(5, 5);
       const view = new TableView(model);
       view.init();
 
-      let tableHeaderRow = document.querySelector("THEAD TR");
+      let tableHeaderRow = document.querySelector("#sheet THEAD TR");
       expect(tableHeaderRow.childNodes.length).toEqual(model.cols);
 
       let cellValues = Array.from(tableHeaderRow.childNodes)
         .map( node => node.textContent );
-      expect(cellValues).toEqual(['A', 'B', 'C', 'D']);
+      expect(cellValues).toEqual(['A', 'B', 'C', 'D', 'E']);
     });
 
     it("clicking table header row highlights current column", () => {
@@ -89,17 +94,16 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
       
-      let tableHeaderCell = document.querySelector("THEAD TR").childNodes[1];
+      let tableHeaderCell = document.querySelector("#sheet THEAD TR").childNodes[1];
       expect(tableHeaderCell.className).toBe("");
 
       tableHeaderCell.click();
-      tableHeaderCell = document.querySelector("THEAD TR").childNodes[1];
-      expect(tableHeaderCell.className).toBe("currentHeader");
+      tableHeaderCell = document.querySelector("#sheet THEAD TR").childNodes[1];
+      expect(tableHeaderCell.className).toBe("selectedHeader");
 
-      const tableBodyCell = document.querySelector("TBODY").childNodes[1].childNodes[1];
-      expect(tableBodyCell.className).toBe("currentCell");
+      const tableBodyCell = document.querySelector("#sheet TBODY").childNodes[1].childNodes[1];
+      expect(tableBodyCell.className).toBe("selectedCell");
     });
-
 
   });
 
@@ -110,7 +114,7 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      let tableFooterRow = document.querySelector("tfoot tr");
+      let tableFooterRow = document.querySelector("#sheet TFOOT TR");
       expect(tableFooterRow.childNodes).not.toBeNull();
       expect(tableFooterRow.childNodes.length).toEqual(model.cols);
     });
@@ -120,7 +124,7 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      const tableBody = document.querySelector("TBODY");
+      const tableBody = document.querySelector("#sheet TBODY");
       let tableCell = tableBody.childNodes[1].childNodes[1];
       
       tableCell.click();
@@ -128,11 +132,10 @@ describe("CLASS TableView Test Suite", () => {
       view.handleFormulaBarUserInput();
 
       
-      let tableFooterRow = document.querySelector("TFOOT TR");
+      let tableFooterRow = document.querySelector("#sheet TFOOT TR");
       expect(tableFooterRow.childNodes[1].textContent).toEqual("12");
       
     });
-
   });
 
   describe("Test Table Body", () => {
@@ -141,7 +144,7 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      let tableBody = document.querySelector("TBODY");
+      let tableBody = document.querySelector("#sheet TBODY");
       expect(tableBody.childNodes.length).toEqual(model.rows);
       expect(tableBody.childNodes[0].childNodes.length).toEqual(model.cols);
     });
@@ -153,7 +156,7 @@ describe("CLASS TableView Test Suite", () => {
       model.setValue(location, 101);
       view.init();
 
-      let tableBody = document.querySelector("TBODY");
+      let tableBody = document.querySelector("#sheet TBODY");
       
       expect(tableBody.childNodes[0].childNodes[0].textContent).toEqual('101');
     });
@@ -163,7 +166,7 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      const tableBody = document.querySelector("TBODY");
+      const tableBody = document.querySelector("#sheet TBODY");
       let tableCell = tableBody.childNodes[1].childNodes[1];
       expect(tableCell.className).toBe("");
 
@@ -184,11 +187,10 @@ describe("CLASS TableView Test Suite", () => {
 
       
       model.setValue({"col": 1, "row": 1}, 35);
-      const tableCell = document.querySelector("TBODY").childNodes[1].childNodes[1];
+      const tableCell = document.querySelector("#sheet TBODY").childNodes[1].childNodes[1];
       tableCell.click();
       expect(formulaBar.value).toBe("35");
     });
-
 
     it("updates the cell when input entered into formula bar", () => {
       const model = new TableModel(3, 3);
@@ -198,7 +200,7 @@ describe("CLASS TableView Test Suite", () => {
       const formulaBar = document.querySelector("#formula");
       expect(formulaBar.value).toBe("");
 
-      const tableCell = document.querySelector("TBODY").childNodes[1].childNodes[1];
+      const tableCell = document.querySelector("#sheet TBODY").childNodes[1].childNodes[1];
       tableCell.click();
       
       formulaBar.value = "kirk";
@@ -206,6 +208,6 @@ describe("CLASS TableView Test Suite", () => {
 
       expect(model.getValue({"col": 1, "row": 1})).toBe("kirk");
     });
-  });
+   });
 
 });
