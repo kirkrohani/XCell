@@ -19,7 +19,6 @@ class TableView {
     this.renderTable();
     this.renderFormulaBar();
     this.attachEventHandlers();
-    
   }
 
   initDOMReference() {
@@ -271,7 +270,6 @@ class TableView {
   handleCellClick(event, column) {
     let col = column === undefined ? event.target.cellIndex : column;
     let row = event.target.parentElement.rowIndex -1;
-
     //console.log(`user clicked cell row:${row} col:${col}`);
     this.currentCellLocation = {"col": col, "row": row};    
     this.renderTable();
