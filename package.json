@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "postinstall": "mkdir -p public/js; browserify client/js/app.js > public/js/bundle.js",
+    "postinstall": "mkdir -p public/js; browserify client/js/app.js > public/js/bundle.js"
   },
   "author": "kirk <kirk.rohani@gmail.com>",
   "license": "MIT",
