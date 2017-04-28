@@ -19,14 +19,6 @@ describe("CLASS Table Model Test Suite", () => {
     });
   });
 
-  describe("Test getting and setting column sums", () => {
-    it("sets the column sum and retrieves the column sum ", () => {
-      const value = 45;
-      const column = 2;
-      model.setColumnSum(column, value);
-      expect(model.getColumnSum(column)).toEqual(value);
-    });
-  });
 
   describe("Test getting column values", () => {
     it("sets the column data to some values  and retrieves the column data for that column ", () => {

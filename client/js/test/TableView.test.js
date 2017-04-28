@@ -23,7 +23,7 @@ describe("CLASS TableView Test Suite", () => {
       expect(model.rows).toEqual(6);
     });
 
-    it("adds a column when add column button clicked", () => {
+    it("adds a column when addColumn button clicked", () => {
       const model = new TableModel(5, 5);
       const view = new TableView(model);
       view.init();
@@ -40,10 +40,12 @@ describe("CLASS TableView Test Suite", () => {
       const view = new TableView(model);
       view.init();
 
-      const tableBody = document.querySelector("TBODY");
+      let tableBody = document.querySelector("#sheet TBODY");
       expect(tableBody.childNodes.length).toEqual(5);
 
       view.insertNewRow(1);
+      view.renderTable();
+      tableBody = document.querySelector("#sheet TBODY");
       expect(tableBody.childNodes.length).toEqual(6);
     });
 
@@ -62,8 +64,8 @@ describe("CLASS TableView Test Suite", () => {
       model.setValue({"col":1, "row":4}, 10);
       
 
-      const tableCell = document.querySelector("#sheet THEAD TR").childNodes[0];
-      tableCell.click();
+      let tableCell = document.querySelector("#sheet THEAD TR");
+      tableCell.childNodes[0].click();
       const insertColButton = document.querySelector("#addCol");
       insertColButton.click();
       
@@ -72,7 +74,6 @@ describe("CLASS TableView Test Suite", () => {
 
     });
   });
-
 
   describe("Test Table Header", () => {
     it("has valid header row labels", () => {
@@ -89,7 +90,6 @@ describe("CLASS TableView Test Suite", () => {
     });
 
     it("clicking table header row highlights current column", () => {
-
       const model = new TableModel(5, 5);
       const view = new TableView(model);
       view.init();
@@ -107,8 +107,38 @@ describe("CLASS TableView Test Suite", () => {
 
   });
 
-  describe("Test Table Footer", () => {
+  describe("Test Table Number Column", () => {
+    it("has valid header column labels", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
 
+      let tableNumberColumnBody = document.querySelector("#number_column TBODY");
+      expect(tableNumberColumnBody.childNodes.length).toEqual(model.rows);
+
+      let cellValues = Array.from(tableNumberColumnBody.childNodes)
+        .map( tableRow => tableRow.childNodes[0].textContent );
+      expect(cellValues).toEqual(['1', '2', '3', '4', '5']);
+    });
+
+    it("clicking table number column highlights current row", () => {
+      const model = new TableModel(5, 5);
+      const view = new TableView(model);
+      view.init();
+      
+      let tableHeaderCell = document.querySelector("#number_column TBODY").childNodes[1].childNodes[0];
+      expect(tableHeaderCell.className).toBe("numberColumn");
+
+      tableHeaderCell.click();
+      tableHeaderCell = document.querySelector("#number_column TBODY").childNodes[1].childNodes[0];
+      expect(tableHeaderCell.className).toBe("selectedNumberColumn");
+
+      const tableBodyCell = document.querySelector("#sheet TBODY").childNodes[1].childNodes[1];
+      expect(tableBodyCell.className).toBe("selectedCell");
+    });
+  });
+
+  describe("Test Table Footer", () => {
     it("has a valid footer row", () => {
       const model = new TableModel(3, 3);
       const view = new TableView(model);
@@ -157,7 +187,6 @@ describe("CLASS TableView Test Suite", () => {
       view.init();
 
       let tableBody = document.querySelector("#sheet TBODY");
-      
       expect(tableBody.childNodes[0].childNodes[0].textContent).toEqual('101');
     });
 
@@ -208,6 +237,39 @@ describe("CLASS TableView Test Suite", () => {
 
       expect(model.getValue({"col": 1, "row": 1})).toBe("kirk");
     });
-   });
+  });
+
+  describe("Test Sum Formula", () => {
+    it("Allows entry of a sum formula into the formula bar", () => {
+      const model = new TableModel(3, 3);
+      const view = new TableView(model);
+      view.init();
+
+      model.setValue({"col": 0, "row": 0}, 3);
+      model.setValue({"col": 0, "row": 1}, 12);
+      let tableCell = document.querySelector("#sheet TBODY").childNodes[2].childNodes[0];
+      tableCell.click();
+      view.formulaBar.value = "=SUM(A1:A2)";
+      view.handleFormulaBarUserInput();
+      expect(model.getValue({"col":0,"row":2})).toEqual("=SUM(A1:A2)");
+    });
+
+    it("calculates the proper sum and displays the result in the cell window", () => {
+      const model = new TableModel(3, 3);
+      const view = new TableView(model);
+      view.init();
+
+      model.setValue({"col": 0, "row": 0}, 3);
+      model.setValue({"col": 0, "row": 1}, 12);
+      let tableCell = document.querySelector("#sheet TBODY").childNodes[2].childNodes[0];
+      tableCell.click();
+      view.formulaBar.value = "=SUM(A1:A2)";
+      view.handleFormulaBarUserInput();
+      expect(model.getValue({"col":0,"row":2})).toEqual("=SUM(A1:A2)");
+      tableCell = document.querySelector("#sheet TBODY").childNodes[2].childNodes[0];
+      expect(tableCell.textContent).toEqual("15");
+    });
+
+  });
 
 });
